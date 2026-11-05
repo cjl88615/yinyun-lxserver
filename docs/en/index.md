@@ -2,19 +2,19 @@
 layout: home
 
 hero:
-  name: "Yinyun"
+  name: "Taliabu Music"
   text: "Playback, downloads, and synchronization"
   tagline: "Deploy and manage a private music service with a Web player, local library, Windows account snapshots, and Subsonic support"
   image:
     src: /icon.svg
-    alt: Yinyun
+    alt: Taliabu Music
   actions:
     - theme: brand
       text: Get Started
       link: /en/guide/getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/bobcc4/yinyun-lxserver
+      link: https://github.com/cjl88615/yinyun-lxserver
 
 features:
   - title: Web Playback and Downloads
@@ -45,6 +45,6 @@ Monitor service status and open user, data, backup, log, and configuration tools
 <style>
 :root {
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
+  --vp-home-hero-name-background: -webkit-linear-gradient(115deg, #0c8b8c 20%, #f4b45e 95%);
 }
 </style>

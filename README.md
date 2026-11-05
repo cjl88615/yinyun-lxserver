@@ -1,6 +1,10 @@
-# 音云 Yinyun
+# 塔岛音乐 · TALIABU MUSIC
 
-<p align="center"><img src="public/icon.svg" width="120" height="120" alt="音云 Yinyun"></p>
+<p align="center"><img src="public/icon.svg" width="120" height="120" alt="塔岛音乐"></p>
+
+> **塔岛音乐 / TALIABU MUSIC**：个人定制的局域网音乐平台。基于音云 v1.9.1，调整品牌名称、Logo、网页/PWA 标题及部署方式；保留上游功能、许可证和版权声明。
+>
+> **定制仓库**：[cjl88615/yinyun-lxserver](https://github.com/cjl88615/yinyun-lxserver) · **上游项目**：[bobcc4/yinyun-lxserver](https://github.com/bobcc4/yinyun-lxserver) · **部署手册**：[塔岛音乐部署指南](deploy/taliabu/README.md)
 
 <div align="center">
   <!-- <img src="public/icon.svg" width="120" height="120" alt="Icon"> -->
@@ -26,7 +30,7 @@
 
 ---
 
-**音云（Yinyun）** 是一个洛雪魔改的，面向私有部署的音乐服务器，内置 Web 播放器、下载与本地曲库管理，支持独立 Windows 客户端账户快照和 Subsonic 客户端。
+**塔岛音乐** 基于 [音云（Yinyun）](https://github.com/bobcc4/yinyun-lxserver) 定制，是一个洛雪魔改的，面向私有部署的音乐服务器，内置 Web 播放器、下载与本地曲库管理，支持独立 Windows 客户端账户快照和 Subsonic 客户端。
 
 > [!IMPORTANT]
 > v1.5.0 调整了固定访问入口：根地址 `/` 为 Web 播放器，管理后台为 `/admin`，旧 `/music` 网页入口已删除。`/api/v1`、Subsonic `/rest` 以及 `/server/music` 音频持久化目录不受影响。

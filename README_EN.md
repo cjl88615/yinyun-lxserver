@@ -1,6 +1,8 @@
-# Yinyun
+# Taliabu Music · 塔岛音乐
 
-<p align="center"><img src="public/icon.svg" width="120" height="120" alt="Yinyun"></p>
+<p align="center"><img src="public/icon.svg" width="120" height="120" alt="Taliabu Music"></p>
+
+> Taliabu Music is a personalized LAN deployment of [Yinyun](https://github.com/bobcc4/yinyun-lxserver) v1.9.1. Branding is customized; original functionality, license, and attribution remain intact. See the [deployment guide](deploy/taliabu/README.md).
 
 <div align="center">
   <p>

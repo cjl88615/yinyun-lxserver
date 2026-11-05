@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yinyun-admin-v1.5.4';
+const CACHE_NAME = 'taliabu-admin-v1.9.1-brand1';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',

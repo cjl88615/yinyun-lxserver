@@ -1,11 +1,11 @@
 {
-    "name": "音云 Yinyun",
-    "short_name": "Yinyun",
+    "name": "塔岛音乐 · TALIABU MUSIC",
+    "short_name": "塔岛音乐",
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#10b981",
+    "background_color": "#092936",
+    "theme_color": "#0b5662",
     "icons": [
         {
             "src": "/_player/assets/logo.svg",

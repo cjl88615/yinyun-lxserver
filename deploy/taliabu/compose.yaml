@@ -1,0 +1,44 @@
+name: taliabu-music
+services:
+  music:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    image: taliabu-music:1.9.1-brand1
+    container_name: taliabu-music
+    restart: unless-stopped
+    ports:
+      - "192.168.2.95:9527:9527"
+    env_file:
+      - /etc/taliabu-music/credentials.env
+    environment:
+      NODE_ENV: production
+      PORT: "9527"
+      BIND_IP: "0.0.0.0"
+      CONFIG_PATH: /server/data/config.js
+      LOG_PATH: /server/logs
+      SERVER_NAME: "塔岛音乐"
+      DISABLE_TELEMETRY: "true"
+      ENABLE_CACHE_SIZE_LIMIT: "true"
+      CACHE_SIZE_LIMIT: "4096"
+    volumes:
+      - /opt/web/taliabu-music/data:/server/data
+      - /opt/web/taliabu-music/logs:/server/logs
+      - /opt/web/taliabu-music/cache:/server/cache
+      - /opt/web/taliabu-music/music:/server/music
+      # Existing NAS library (read-only), after confirming the real source path:
+      # - /mnt/nas/music:/server/external/admin/bendigequ:ro
+    cpus: "1.5"
+    mem_limit: 1g
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:9527/',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 8s
+      retries: 4
+      start_period: 35s

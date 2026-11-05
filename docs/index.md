@@ -2,12 +2,12 @@
 layout: home
 
 hero:
-  name: "音云 Yinyun"
+  name: "塔岛音乐"
   text: "使用帮助"
   tagline: "部署、同步、播放、下载、曲库管理和第三方客户端连接手册"
   image:
     src: /icon.svg
-    alt: Yinyun
+    alt: 塔岛音乐
   actions:
     - theme: brand
       text: 快速上手
@@ -40,7 +40,7 @@ features:
 
 ::: tip 项目地址与推荐使用方式
 
-**服务端：** [bobcc4/yinyun-lxserver](https://github.com/bobcc4/yinyun-lxserver)
+**定制仓库：** [cjl88615/yinyun-lxserver](https://github.com/cjl88615/yinyun-lxserver)
 
 支持使用 Docker 搭建，也提供 Windows、macOS 等平台的安装包。
 

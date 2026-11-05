@@ -9686,7 +9686,7 @@ async function importPlaylistExchangeInput(input) {
 }
 
 async function openPlaylistExchangeImport() {
-    const url = await showInput('导入分享歌单', '请输入另一台音云生成的分享链接：', { placeholder: 'https://example.com/share/playlist/...' });
+    const url = await showInput('导入分享歌单', '请输入另一台塔岛音乐生成的分享链接：', { placeholder: 'https://example.com/share/playlist/...' });
     if (url) await importPlaylistExchangeInput({ url: String(url).trim() });
 }
 

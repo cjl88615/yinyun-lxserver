@@ -10,6 +10,6 @@ RUN ./node_modules/.bin/tsc --project tsconfig.json && ./node_modules/.bin/tsc-a
 
 FROM taliabu-music:1.9.1-brand2
 COPY --from=compile /build/server/server/userApi.js /server/server/server/userApi.js
-COPY --from=compile /build/server/server/server.js /server/server/server.js
+COPY --from=compile /build/server/server/server.js /server/server/server/server.js
 COPY public/music/app.js /server/public/music/app.js
 COPY public/music/sw.js /server/public/music/sw.js

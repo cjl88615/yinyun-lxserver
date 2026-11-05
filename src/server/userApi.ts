@@ -166,6 +166,41 @@ export interface ApiStatusInfo {
 
 // 加载的 API 实例
 const loadedApis = new Map<string, any>()
+
+// One remote service can be shared by every platform and account. When it
+// explicitly limits access, respect its cooldown instead of retrying from
+// all active players and the download queue at once.
+const SOURCE_LIMIT_MESSAGE = '当前在线音源限制了服务器访问，请稍后重试，或播放已缓存歌曲'
+const sourceLimits = new Map<string, { retryAfter: number, probing: boolean }>()
+
+const isSourceLimited = (error: unknown): boolean =>
+    /block ip|too many requests|HTTP 429/i.test(String((error as Error)?.message || error || ''))
+
+const createSourceLimitError = () =>
+    Object.assign(new Error(SOURCE_LIMIT_MESSAGE), { code: 'SOURCE_RATE_LIMITED' })
+
+const mayRequestSource = (key: string): boolean => {
+    const limit = sourceLimits.get(key)
+    if (!limit) return true
+    if (limit.retryAfter > Date.now() || limit.probing) return false
+    // Exactly one half-open probe after the restriction interval.
+    limit.probing = true
+    return true
+}
+
+const recordSourceOutcome = (key: string, error?: unknown) => {
+    if (!error || !isSourceLimited(error)) {
+        sourceLimits.delete(key)
+        return
+    }
+    const text = String((error as Error)?.message || error)
+    const waitMs = /too many requests|HTTP 429/i.test(text) ? 2 * 60_000 : 15 * 60_000
+    const previous = sourceLimits.get(key)
+    sourceLimits.set(key, { retryAfter: Date.now() + waitMs, probing: false })
+    if (!previous || previous.retryAfter <= Date.now()) {
+        console.warn('[UserApi] Upstream access limited; remote requests paused until the cooldown expires')
+    }
+}
 const isConfiguredOwner = (username?: string): username is string => {
     const normalized = tryNormalizeUsername(username)
     return normalized === username && global.lx.config.users.some(user => user.name === normalized)
@@ -750,8 +785,13 @@ export async function callUserApiGetMusicUrl(
     if (supportedCount === 1) {
         const api = candidates[0]
         const maxRetries = 3
+        const apiKey = `${api.info.owner}_${api.info.id}`
 
         for (let i = 0; i < maxRetries; i++) {
+            if (!mayRequestSource(apiKey)) {
+                lastError = createSourceLimitError()
+                break
+            }
             try {
                 console.log(`[UserApi] 尝试 ${api.info.name} 获取 ${source} 音乐链接 (第 ${i + 1}/${maxRetries} 次, Owner: ${api.info.owner})`)
 
@@ -761,6 +801,7 @@ export async function callUserApiGetMusicUrl(
                     type: quality
                 })
                 const url = await validateMusicUrl(resolvedUrl)
+                recordSourceOutcome(apiKey)
 
                 console.log(`[UserApi] ✓ ${api.info.name} 成功返回链接 (Owner: ${api.info.owner})`)
                 const att = { name: api.info.name, status: 'success', message: `第 ${i + 1} 次尝试成功` }
@@ -768,6 +809,14 @@ export async function callUserApiGetMusicUrl(
                 if (onProgress) await onProgress(att)
                 return { url, type: quality, sourceName: api.info.name, attempts }
             } catch (error: any) {
+                recordSourceOutcome(apiKey, error)
+                if (isSourceLimited(error)) {
+                    lastError = createSourceLimitError()
+                    const att = { name: api.info.name, status: 'fail', message: SOURCE_LIMIT_MESSAGE }
+                    attempts.push(att)
+                    if (onProgress) await onProgress(att)
+                    break
+                }
                 console.error(`[UserApi] ${api.info.name} 失败 (第 ${i + 1}/${maxRetries} 次):`, `音源日志：${error.message}`)
                 lastError = error
                 const att = { name: api.info.name, status: 'fail', message: `第 ${i + 1} 次尝试失败,音源日志：${error.message}` }
@@ -782,6 +831,11 @@ export async function callUserApiGetMusicUrl(
     } else {
         // 多个源，轮流尝试
         for (const api of candidates) {
+            const apiKey = `${api.info.owner}_${api.info.id}`
+            if (!mayRequestSource(apiKey)) {
+                lastError = createSourceLimitError()
+                continue
+            }
             try {
                 console.log(`[UserApi] 尝试 ${api.info.name} 获取 ${source} 音乐链接 (Owner: ${api.info.owner})`)
 
@@ -791,6 +845,7 @@ export async function callUserApiGetMusicUrl(
                     type: quality
                 })
                 const url = await validateMusicUrl(resolvedUrl)
+                recordSourceOutcome(apiKey)
 
                 console.log(`[UserApi] ✓ ${api.info.name} 成功返回链接 (Owner: ${api.info.owner})`)
                 const att = { name: api.info.name, status: 'success' }
@@ -798,6 +853,14 @@ export async function callUserApiGetMusicUrl(
                 if (onProgress) await onProgress(att)
                 return { url, type: quality, sourceName: api.info.name, attempts }
             } catch (error: any) {
+                recordSourceOutcome(apiKey, error)
+                if (isSourceLimited(error)) {
+                    lastError = createSourceLimitError()
+                    const att = { name: api.info.name, status: 'fail', message: SOURCE_LIMIT_MESSAGE }
+                    attempts.push(att)
+                    if (onProgress) await onProgress(att)
+                    continue
+                }
                 console.error(`[UserApi] ${api.info.name} 失败:`, `音源日志：${error.message}`)
                 lastError = error
                 const att = { name: api.info.name, status: 'fail', message: `音源日志：${error.message}` }
@@ -812,7 +875,9 @@ export async function callUserApiGetMusicUrl(
         ? `自定义源 [${candidates[0].info.name}] 解析失败`
         : `已尝试了 ${supportedCount} 个支持 ${source} 平台的源，但全部解析失败`
 
-    const finalError: any = new Error(`${detailMsg} (音源日志: ${lastError?.message})`)
+    const finalError: any = (lastError as any)?.code === 'SOURCE_RATE_LIMITED'
+        ? createSourceLimitError()
+        : new Error(`${detailMsg} (音源日志: ${lastError?.message})`)
     finalError.attempts = attempts
     throw finalError
 }

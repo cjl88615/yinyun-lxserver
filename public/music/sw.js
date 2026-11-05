@@ -1,4 +1,4 @@
-const CACHE_NAME = 'taliabu-player-v1.9.1-brand2';
+const CACHE_NAME = 'taliabu-player-v1.9.1-brand3';
 const ASSETS_TO_CACHE = [
     '/',
     '/manifest.json',

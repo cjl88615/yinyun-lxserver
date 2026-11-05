@@ -3472,7 +3472,7 @@ async function resolveSongUrl(song, quality, isSilent = false, isRetry = false, 
         if (result.errorMsg) throw new Error(result.errorMsg);
         return result;
     } catch (error) {
-        if (error?.code === 'AUTH_REQUIRED') throw error;
+        if (error?.code === 'AUTH_REQUIRED' || error?.code === 'SOURCE_RATE_LIMITED') throw error;
         if (disableFallback) {
             throw error;
         }
@@ -3555,6 +3555,7 @@ async function resolveDownloadSongUrl(song, quality, isSilent = true) {
                 if (result.errorMsg) throw new Error(result.errorMsg);
                 return result;
             } catch (err) {
+                if (err?.code === 'SOURCE_RATE_LIMITED') throw err;
                 lastError = err;
                 console.warn(`[DownloadResolve] 解析失败: ${candidateSong.name} via ${candidateSong.source} (${candidateQuality})`, err);
                 if (!window.QualityManager || settings.enableAutoDegradeQuality === false) break;
@@ -3928,7 +3929,7 @@ async function fetchSongUrl(song, quality, isRetry = false, isSilent = false) {
                 result = await res.json();
                 if (result.error) errorMsg = result.error;
             } catch (e) { }
-            throw { message: errorMsg, attempts: result.attempts };
+            throw { message: errorMsg, code: result.code, attempts: result.attempts };
         }
 
         const result = await res.json();
@@ -4331,6 +4332,17 @@ window.playFromView = playFromView;
 
 async function runRecoveryFlow(error) {
     if (!currentRecoveryState) return;
+    if (error?.code === 'SOURCE_RATE_LIMITED' || String(error?.message || '').includes('当前在线音源限制了服务器访问')) {
+        currentRecoveryState = null;
+        if (window._autoSkipTimer) {
+            clearTimeout(window._autoSkipTimer);
+            window._autoSkipTimer = null;
+        }
+        setPlayerStatus('音源暂不可用');
+        showError('在线音源访问受限，请稍后重试或播放已缓存歌曲');
+        updatePlayButton(false);
+        return;
+    }
 
     const { steps, currentStepIndex } = currentRecoveryState;
     if (currentStepIndex >= steps.length) {
@@ -4728,7 +4740,7 @@ function setPlayerStatus(status, isPlaying = null, isLoading = false) {
     }
 
     // 处理其他固定文本状态
-    if (typeof status === 'string' && (status.includes('请点击') || status.includes('即将跳过'))) {
+    if (typeof status === 'string' && (status.includes('请点击') || status.includes('即将跳过') || status === '音源暂不可用')) {
         // [Fix] 如果音频已经在播放，忽略“请点击”提示，直接落入下方获取实时状态逻辑，避免 UI 冲突
         if (status.includes('请点击') && audio && !audio.paused) {
             // Fall through to show real playStatus

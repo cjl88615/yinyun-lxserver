@@ -4355,6 +4355,7 @@ const handleStartServer = async (port = 9527, ip = '127.0.0.1') => await new Pro
             let result: any
 
             let customSourceError: string | null = null
+            let customSourceCode: string | undefined
             let attempts: any[] = []
             if (isSourceSupported(source, verifiedUsername)) {
               try {
@@ -4370,6 +4371,7 @@ const handleStartServer = async (port = 9527, ip = '127.0.0.1') => await new Pro
               } catch (userApiError: any) {
                 console.error(`[MusicUrl] Custom source failed:`, userApiError.message)
                 customSourceError = userApiError.message
+                customSourceCode = userApiError.code
                 attempts = userApiError.attempts || []
                 // 不抛出错误，继续尝试内置源
               }
@@ -4382,6 +4384,7 @@ const handleStartServer = async (port = 9527, ip = '127.0.0.1') => await new Pro
             if (!result) {
               const errMsg = customSourceError || `未找到支持 ${source} 平台的自定义源，请在设置中添加或启用相关源`
               const err: any = new Error(errMsg)
+              err.code = customSourceCode
               err.attempts = attempts
               throw err
             }
@@ -4404,9 +4407,12 @@ const handleStartServer = async (port = 9527, ip = '127.0.0.1') => await new Pro
             res.end(JSON.stringify(result))
           } catch (err: any) {
             console.error('[MusicUrl] Error:', err.message)
-            // [Fix] Return 500 but with specific error JSON to let frontend show detailed toast
-            res.writeHead(500, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ error: err.message, code: 500, attempts: err.attempts }))
+            const limited = err.code === 'SOURCE_RATE_LIMITED'
+            res.writeHead(limited ? 503 : 500, {
+              'Content-Type': 'application/json',
+              ...(limited ? { 'Retry-After': '900' } : {}),
+            })
+            res.end(JSON.stringify({ error: err.message, code: limited ? 'SOURCE_RATE_LIMITED' : 500, attempts: err.attempts }))
           }
         })
         return

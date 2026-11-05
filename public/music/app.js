@@ -3928,7 +3928,7 @@ async function fetchSongUrl(song, quality, isRetry = false, isSilent = false) {
                 result = await res.json();
                 if (result.error) errorMsg = result.error;
             } catch (e) { }
-            throw { message: errorMsg, attempts: result.attempts };
+            throw { message: errorMsg, code: result.code, attempts: result.attempts };
         }
 
         const result = await res.json();
@@ -4331,6 +4331,17 @@ window.playFromView = playFromView;
 
 async function runRecoveryFlow(error) {
     if (!currentRecoveryState) return;
+    if (error?.code === 'SOURCE_RATE_LIMITED' || String(error?.message || '').includes('当前在线音源限制了服务器访问')) {
+        currentRecoveryState = null;
+        if (window._autoSkipTimer) {
+            clearTimeout(window._autoSkipTimer);
+            window._autoSkipTimer = null;
+        }
+        setPlayerStatus('音源暂不可用');
+        showError('在线音源访问受限，请稍后重试或播放已缓存歌曲');
+        updatePlayButton(false);
+        return;
+    }
 
     const { steps, currentStepIndex } = currentRecoveryState;
     if (currentStepIndex >= steps.length) {

@@ -3,8 +3,8 @@ services:
   music:
     build:
       context: ../..
-      dockerfile: Dockerfile
-    image: taliabu-music:1.9.1-brand2
+      dockerfile: deploy/taliabu/Dockerfile.rate-limit
+    image: taliabu-music:1.9.1-brand3
     container_name: taliabu-music
     restart: unless-stopped
     ports:

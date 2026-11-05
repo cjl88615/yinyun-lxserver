@@ -1,0 +1,15 @@
+# Compile the two changed server modules against the same pinned codebase.
+# Keep the tested brand2 runtime and its data format unchanged.
+FROM node:24.22.1-alpine AS compile
+WORKDIR /build
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts --no-audit --no-fund
+COPY tsconfig.json ./
+COPY src ./src
+RUN ./node_modules/.bin/tsc --project tsconfig.json && ./node_modules/.bin/tsc-alias -p tsconfig.json
+
+FROM taliabu-music:1.9.1-brand2
+COPY --from=compile /build/server/server/userApi.js /server/server/server/userApi.js
+COPY --from=compile /build/server/server/server.js /server/server/server.js
+COPY public/music/app.js /server/public/music/app.js
+COPY public/music/sw.js /server/public/music/sw.js

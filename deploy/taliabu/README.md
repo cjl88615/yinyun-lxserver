@@ -21,3 +21,16 @@
 更新前记录当前 Git SHA 和 Docker 镜像 ID；如果有问题恢复到此前代码/镜像，不要删除 data/music/cache 目录。
 仅绑定局域网 IP，默认不向公网开放；音源脚本须来自可信来源，不开启 unsafe VM。音乐内容须遵守使用权限和版权授权。
 原项目、许可证及贡献者署名：[bobcc4/yinyun-lxserver](https://github.com/bobcc4/yinyun-lxserver)。
+
+
+## 在线音源恢复与维护（2026-11-05）
+
+在线搜索来自内置音乐 SDK，**在线播放 URL 仍依赖独立的自定义音源**。未配置时服务端日志会出现 `未找到支持 tx 平台的自定义源`、`POST /api/v1/player/music/url 500`。容器健康检查和搜索正常都不能替代实际在线播放验收。
+
+- 当前部署从 `pdone/lx-music-source` 取得 Huibq v1.2.0 的透明 JS 音源，原文件的 Git blob SHA 为 `f2028068db448a9e0b738106112eb300bcefbcc2`，上游 Git commit 为 `000578ddca4a676012cf735abdc3489efdc67c74`。不得自动执行未审查的远程新版本。
+- 音源代码与用户分享状态位于持久化目录 `data/users/source/`，**不提交到公开 GitHub，也不写入镜像层**。服务器现有音源所有者为默认服务账户 `taliabu`；`shares.json` 的 `targetUsers: ["*"]` 向其他音乐账户授权使用。
+- `allowUnsafeVM` / `system.allowUnsafeVM` 均保持关闭。新脚本应静态审核、在独立测试容器验证后，再导入正式服务器，绝不因为兼容性而直接开启不安全 VM。
+- 该来源声明禁止批量下载，仅支持 `kw/kg/tx/wy/mg` 的标准音质（主要为 128k、320k），属于社区第三方服务。**不能保证在线资源授权、可用率、无损质量或长期免费**。用户仅应播放/下载有权限使用的歌曲。
+- 已用隔离测试用户验证酷我/QQ 音频解析返回 HTTP 200，以及播放器服务器音频代理 HTTP 206 分段响应，正式部署已验证所有用户共享配置生效；尚未逐首验证完整在线曲库。
+- 修改前备份在 `/var/backups/taliabu-music/before-source-20261105.tar.gz`，该文件仅 root 可读；恢复时先备份现有数据，切勿覆盖后续新增的用户与歌单。
+- 启动后从 `docker logs taliabu-music` 确认出现 `成功加载: Huibq_lxmusic源`，然后浏览器重新登录，先用 `128k` 测试无会员限制的歌曲。第三方源失效不应影响本地 `/music` 目录歌曲的播放。

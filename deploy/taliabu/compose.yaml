@@ -4,7 +4,7 @@ services:
     build:
       context: ../..
       dockerfile: Dockerfile
-    image: taliabu-music:1.9.1-brand1
+    image: taliabu-music:1.9.1-brand2
     container_name: taliabu-music
     restart: unless-stopped
     ports:

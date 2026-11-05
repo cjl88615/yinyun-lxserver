@@ -8,3 +8,4 @@
 - 服务器显示名通过环境变量 SERVER_NAME=塔岛音乐 指定。
 - 本仓库基于音云 Yinyun（https://github.com/bobcc4/yinyun-lxserver）的私人定制 Fork，保留原作者版权、许可证与致谢。
 - 服务器部署见 deploy/taliabu/README.md。严禁把密码、音乐源密钥和服务器私有配置提交到公开仓库。
+- 面向用户的播放器、后台、关于页面只展示「塔岛音乐 / 2D厨房」品牌内容，不展示 GitHub、项目版本、构建信息或源码贡献者导航；不要误删 LICENSE、NOTICE.md 或 JS 顶部开源声明。

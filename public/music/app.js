@@ -4740,7 +4740,7 @@ function setPlayerStatus(status, isPlaying = null, isLoading = false) {
     }
 
     // 处理其他固定文本状态
-    if (typeof status === 'string' && (status.includes('请点击') || status.includes('即将跳过'))) {
+    if (typeof status === 'string' && (status.includes('请点击') || status.includes('即将跳过') || status === '音源暂不可用')) {
         // [Fix] 如果音频已经在播放，忽略“请点击”提示，直接落入下方获取实时状态逻辑，避免 UI 冲突
         if (status.includes('请点击') && audio && !audio.paused) {
             // Fall through to show real playStatus

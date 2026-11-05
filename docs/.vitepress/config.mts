@@ -10,7 +10,7 @@ export default defineConfig({
   themeConfig: {
     logo: '/icon.svg',
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/bobcc4/yinyun-lxserver' }
+      { icon: 'github', link: 'https://github.com/cjl88615/yinyun-lxserver' }
     ],
     search: {
       provider: 'local'
@@ -20,7 +20,7 @@ export default defineConfig({
     root: {
       label: '简体中文',
       lang: 'zh-CN',
-      title: "音云 Yinyun",
+      title: "塔岛音乐 · TALIABU MUSIC",
       description: "支持 Web 播放、下载、本地曲库、Windows 账户快照与 Subsonic 的私有音乐服务器",
       themeConfig: {
         nav: [
@@ -94,7 +94,7 @@ export default defineConfig({
       label: 'English',
       lang: 'en-US',
       link: '/en/',
-      title: "Yinyun",
+      title: "Taliabu Music",
       description: "A self-hosted music server with Web playback, downloads, Windows account snapshots, and Subsonic support",
       themeConfig: {
         nav: [

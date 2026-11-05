@@ -1,9 +1,9 @@
-# 音云 Yinyun
+# 塔岛音乐 · TALIABU MUSIC
 
 <div align="center">
-  <img src="/_player/assets/logo.svg" width="120" height="120" alt="Yinyun Logo">
+  <img src="/_player/assets/logo.svg" width="120" height="120" alt="塔岛音乐 Logo">
   <br>
-  <h1>音云 Yinyun</h1>
+  <h1>塔岛音乐</h1>
   <p>
     <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" alt="Build Status">
     <img src="https://img.shields.io/badge/hash-{{buildHash}}-%2310b981?style=flat-square" alt="Build Hash">
@@ -12,13 +12,13 @@
   </p>
 </div>
 
-音云内置的高性能 Web 播放器，提供接近原生 App 的音乐体验。
+塔岛音乐内置的 Web 播放器，提供接近原生 App 的音乐体验。
 
 ## ✨ 核心特性
 
 - **现代化界面**: 采用清爽的现代化 UI 设计，支持 Glassmorphism 玻璃拟态效果。
 - **多源搜索**: 支持聚合搜索各大音乐平台的资源。
-- **歌单同步**: 与音云客户端数据互通，通过同步账户保存我的收藏和歌单。
+- **歌单同步**: 与服务端数据互通，通过同步账户保存我的收藏和歌单。
 - **PWA 支持**: 支持安装为桌面/手机独立应用，离线也能秒开。
 - **自定义源**: 支持导入自定义源脚本，无限扩展音乐来源。
 
@@ -63,7 +63,7 @@
 核心接口基于 `musicsdk` 实现。
 
 <div align="center" style="margin-top: 20px;">
-  <a href="https://github.com/bobcc4/yinyun-lxserver" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+  <a href="https://github.com/cjl88615/yinyun-lxserver" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
     <i class="fab fa-github"></i> GitHub 仓库
   </a>
 </div>

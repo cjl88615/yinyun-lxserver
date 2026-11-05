@@ -740,6 +740,7 @@ const resolveServerSong = async (
           sourceName: result.sourceName,
         }
       } catch (err: any) {
+        if (err?.code === 'SOURCE_RATE_LIMITED') throw err
         errors.push(`${source}/${quality}: ${err?.message || 'resolve failed'}`)
       }
     }

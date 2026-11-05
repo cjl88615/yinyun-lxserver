@@ -3472,7 +3472,7 @@ async function resolveSongUrl(song, quality, isSilent = false, isRetry = false, 
         if (result.errorMsg) throw new Error(result.errorMsg);
         return result;
     } catch (error) {
-        if (error?.code === 'AUTH_REQUIRED') throw error;
+        if (error?.code === 'AUTH_REQUIRED' || error?.code === 'SOURCE_RATE_LIMITED') throw error;
         if (disableFallback) {
             throw error;
         }
@@ -3555,6 +3555,7 @@ async function resolveDownloadSongUrl(song, quality, isSilent = true) {
                 if (result.errorMsg) throw new Error(result.errorMsg);
                 return result;
             } catch (err) {
+                if (err?.code === 'SOURCE_RATE_LIMITED') throw err;
                 lastError = err;
                 console.warn(`[DownloadResolve] 解析失败: ${candidateSong.name} via ${candidateSong.source} (${candidateQuality})`, err);
                 if (!window.QualityManager || settings.enableAutoDegradeQuality === false) break;
